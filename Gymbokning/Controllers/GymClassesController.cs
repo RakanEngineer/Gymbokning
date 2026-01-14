@@ -1,22 +1,43 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Gymbokning.Data;
+using Gymbokning.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Gymbokning.Data;
-using Gymbokning.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Gymbokning.Controllers
 {
     public class GymClassesController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public GymClassesController(ApplicationDbContext context)
+        public GymClassesController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
+        }
+        [Authorize]
+        public async Task<IActionResult> BookingToggle(int id)
+        {
+            var gymClass = await _context.GymClass
+                .Include(g => g.AttendingMembers)
+                .FirstOrDefaultAsync(g => g.Id == id);
+
+            var user = await _userManager.GetUserAsync(User);
+
+            if (gymClass.AttendingMembers.Contains(user))
+                gymClass.AttendingMembers.Remove(user);
+            else
+                gymClass.AttendingMembers.Add(user);
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: GymClasses
