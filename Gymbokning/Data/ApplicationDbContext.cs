@@ -11,6 +11,6 @@ namespace Gymbokning.Data
             : base(options)
         {
         }
-        public DbSet<GymClass> GymClass { get; set; } = default!;
+        public DbSet<GymClass> GymClasses { get; set; } = default!;
     }
 }

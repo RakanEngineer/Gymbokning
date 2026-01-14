@@ -23,9 +23,11 @@ namespace Gymbokning.Controllers
             _userManager = userManager;
         }
         [Authorize]
-        public async Task<IActionResult> BookingToggle(int id)
+        public async Task<IActionResult> BookingToggle(int? id)
         {
-            var gymClass = await _context.GymClass
+            if (id == null) return NotFound();
+            
+            var gymClass = await _context.GymClasses
                 .Include(g => g.AttendingMembers)
                 .FirstOrDefaultAsync(g => g.Id == id);
 
@@ -43,7 +45,7 @@ namespace Gymbokning.Controllers
         // GET: GymClasses
         public async Task<IActionResult> Index()
         {
-            return View(await _context.GymClass.ToListAsync());
+            return View(await _context.GymClasses.ToListAsync());
         }
 
         // GET: GymClasses/Details/5
@@ -54,7 +56,7 @@ namespace Gymbokning.Controllers
                 return NotFound();
             }
 
-            var gymClass = await _context.GymClass
+            var gymClass = await _context.GymClasses
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (gymClass == null)
             {
@@ -75,6 +77,7 @@ namespace Gymbokning.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Create([Bind("Id,Name,StartTime,Duration,Description")] GymClass gymClass)
         {
             if (ModelState.IsValid)
@@ -87,6 +90,7 @@ namespace Gymbokning.Controllers
         }
 
         // GET: GymClasses/Edit/5
+        [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -94,7 +98,7 @@ namespace Gymbokning.Controllers
                 return NotFound();
             }
 
-            var gymClass = await _context.GymClass.FindAsync(id);
+            var gymClass = await _context.GymClasses.FindAsync(id);
             if (gymClass == null)
             {
                 return NotFound();
@@ -107,6 +111,7 @@ namespace Gymbokning.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,StartTime,Duration,Description")] GymClass gymClass)
         {
             if (id != gymClass.Id)
@@ -138,6 +143,7 @@ namespace Gymbokning.Controllers
         }
 
         // GET: GymClasses/Delete/5
+        [Authorize]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -145,7 +151,7 @@ namespace Gymbokning.Controllers
                 return NotFound();
             }
 
-            var gymClass = await _context.GymClass
+            var gymClass = await _context.GymClasses
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (gymClass == null)
             {
@@ -158,12 +164,13 @@ namespace Gymbokning.Controllers
         // POST: GymClasses/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var gymClass = await _context.GymClass.FindAsync(id);
+            var gymClass = await _context.GymClasses.FindAsync(id);
             if (gymClass != null)
             {
-                _context.GymClass.Remove(gymClass);
+                _context.GymClasses.Remove(gymClass);
             }
 
             await _context.SaveChangesAsync();
@@ -172,7 +179,7 @@ namespace Gymbokning.Controllers
 
         private bool GymClassExists(int id)
         {
-            return _context.GymClass.Any(e => e.Id == id);
+            return _context.GymClasses.Any(e => e.Id == id);
         }
     }
 }
