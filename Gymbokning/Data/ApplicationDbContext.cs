@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Gymbokning.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Gymbokning.Data
@@ -9,5 +10,6 @@ namespace Gymbokning.Data
             : base(options)
         {
         }
+        public DbSet<GymClass> GymClass { get; set; } = default!;
     }
 }
