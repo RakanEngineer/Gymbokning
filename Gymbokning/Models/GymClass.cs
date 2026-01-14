@@ -8,5 +8,9 @@
         public TimeSpan Duration { get; set; }
         public DateTime EndTime => StartTime + Duration;
         public string Description { get; set; }
+        
+        // Navigation Property
+        public ICollection<ApplicationUser> AttendingMembers { get; set; }
+            = new List<ApplicationUser>();
     }
 }
